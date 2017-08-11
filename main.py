@@ -44,8 +44,6 @@ def parse_channel(channel_section):
 
         program_list.append(program_data)
 
-    print(start_time)
-
     return program_list
 
 
@@ -75,12 +73,12 @@ def main():
             aggr += program['duration']
 
 
-    print("Total time: %s", aggr)
-    for cat in category_time:
-        print(cat, category_time[cat])
-    #         print('%s => %s' % (get_category(name), name))
-
-    # print(channels_data)
+    print("Total time: %s" % aggr)
+    print("-" * 30)
+    for cat in sorted(category_time, key=lambda k: category_time[k],
+                      reverse=True):
+        print("{:<15}{:>15}".format(cat, str(category_time[cat])))
+        print("-" * 30)
 
 
 
