@@ -15,6 +15,7 @@ CATEGORIES = {
         'supercopa da inglaterra',
         'premier league',
         'copa do rei',
+        'george best',
     ],
     'jornalismo': [
         'sportscenter',
