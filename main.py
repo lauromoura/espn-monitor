@@ -7,6 +7,7 @@ import pandas as pd
 
 from categories import get_category
 
+# URL_DATE = 'http://espn.uol.com.br/programacao?date=2017-08-13'
 URL = 'http://espn.uol.com.br/programacao'
 DATE_FORMAT = '%d/%m/%Y %H:%M %z'
 
