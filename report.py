@@ -10,6 +10,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', action='store', metavar='FILE',
                         help='Input file')
+    parser.add_argument('--list-others', action='store_true',
+                        help='List programs in category "others"')
 
     args = parser.parse_args()
 
@@ -24,6 +26,10 @@ def main():
     print("Total de horas agrupadas por categoria apenas")
     group = data.groupby('category')['duration'].sum()
     print(group.sort_values(ascending=False))
+
+    if args.list_others:
+        print()
+        print(data[data['category'] == 'outros']['name'])
 
 if __name__ == '__main__':
     main()
