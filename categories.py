@@ -16,6 +16,11 @@ CATEGORIES = {
         'premier league',
         'copa do rei',
         'george best',
+        'copa da alemanha',
+        'brasileirão',
+        'supercopa da espanha',
+        'supercopa da itália',
+        'becoming zlatan'
     ],
     'jornalismo': [
         'sportscenter',
@@ -28,7 +33,8 @@ CATEGORIES = {
         'mlb',
         'baseball',
         'hockey',
-        'basketball'
+        'basketball',
+        'espn league'
     ],
     'radicais': [
         'x games'
@@ -38,6 +44,12 @@ CATEGORIES = {
         'league of legends',
         'lol',
         'multiplayer',
+        'matchmaking'
+    ],
+    'automobilismo': [
+        'f1:',
+        'dtm alemã',
+        'europeu de formula'
     ]
 }
 
@@ -48,4 +60,4 @@ def get_category(name):
             if token in name:
                 return category
     else:
-        return 'desconhecido'
+        return 'outros'
