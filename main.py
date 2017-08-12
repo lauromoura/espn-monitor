@@ -3,6 +3,7 @@ from collections import defaultdict
 
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 from categories import get_category
 
@@ -15,7 +16,7 @@ def date_from_str(string, has_tz=False, tz="-0300"):
 
     return datetime.strptime(string, DATE_FORMAT)
 
-def parse_channel(channel_section):
+def parse_channel(channel_section, channel_name):
     '''Parses channel schedule into a dict'''
     program_div = channel_section.div
 
@@ -41,6 +42,7 @@ def parse_channel(channel_section):
         program_data['duration'] = duration
         program_data['name'] = name
         program_data['category'] = get_category(name)
+        program_data['channel'] = channel_name
 
         program_list.append(program_data)
 
@@ -56,33 +58,14 @@ def main():
 
     sections = channels_div.find_all('section')
 
-    channels_data = {}
+    channels_data = []
 
     for section in sections:
         channel_name = section.find('h4').text
-        channels_data[channel_name] = parse_channel(section)
+        channels_data += parse_channel(section, channel_name)
 
-    category_time = defaultdict(timedelta)
-    aggr = timedelta()
-    for channel in channels_data:
-        for program in channels_data[channel]:
-            # name = program['name']
-            # print(program)
-            category = program['category']
-            category_time[category] += program['duration']
-            aggr += program['duration']
-
-
-    print("Total time: %s" % aggr)
-    print("-" * 30)
-    for cat in sorted(category_time, key=lambda k: category_time[k],
-                      reverse=True):
-        print("{:<15}{:>15}".format(cat, str(category_time[cat])))
-        print("-" * 30)
-
-
-
-
+    data = pd.DataFrame(channels_data)
+    data.to_csv('out.csv', encoding='utf-8')
 
 
 if __name__ == '__main__':
