@@ -1,24 +1,22 @@
 """Download module to get tv schedules"""
 
 
-import requests
+from datetime import date
+
 import pandas as pd
 
-from parsers import ESPNParser
+from parsers import ESPNFetcher
 
-# URL_DATE = 'http://espn.uol.com.br/programacao?date=2017-08-13'
-URL = 'http://espn.uol.com.br/programacao'
 
 
 def main():
-    '''Donwloads and generates csv file for the tv schedule.'''
-    response = requests.get(URL)
+    '''Donwloads and generates csv file for the tv schedule'''
 
-    parser = ESPNParser()
-    channels_data = parser.parse(response.text)
+    fetcher = ESPNFetcher()
 
-    data = pd.DataFrame(channels_data)
-    data.to_csv('out.csv', encoding='utf-8')
+    channels_data = fetcher.get(target_date=date.today())
+
+    channels_data.to_csv('%s-%s.csv' % (fetcher.name(), date.today()), encoding='utf-8')
 
 
 if __name__ == '__main__':

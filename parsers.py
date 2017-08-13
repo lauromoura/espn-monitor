@@ -5,26 +5,32 @@ import abc
 from datetime import datetime
 
 from bs4 import BeautifulSoup
+import requests
+import pandas as pd
 
 from categories import get_category
 
 
+class FetcherBase(metaclass=abc.ABCMeta):
+    '''Base class for fetcher classes.
 
-class ParserBase(metaclass=abc.ABCMeta):
-    '''Base class for parser classes.
-
-    Each channel group will have its own parser.'''
+    Each channel group will have its own fetcher.'''
 
     @abc.abstractmethod
-    def parse(self, input_data):
-        '''Parses data into a dataframe'''
+    def get(self, target_date):
+        '''fetches data for date 'date' into a dataframe'''
 
+    @abc.abstractmethod
+    def name(self):
+        '''Returns the name of this fetcher'''
 
-@ParserBase.register
-class ESPNParser(ParserBase):
-    '''Parse data from ESPN Brasil channels'''
+@FetcherBase.register
+class ESPNFetcher(FetcherBase):
+    '''Fetches data from ESPN Brasil channels'''
 
     DATE_FORMAT = '%d/%m/%Y %H:%M %z'
+    URL = 'http://espn.uol.com.br/programacao'
+    NAME = 'ESPN'
 
     def _parse_channels(self, section, channel_name):
         '''Parses channel schedule into a dict'''
@@ -58,7 +64,7 @@ class ESPNParser(ParserBase):
 
         return program_list
 
-    def parse(self, input_data):
+    def _parse(self, input_data):
         '''Parses data into a list of dicts with each program information.'''
         soup = BeautifulSoup(input_data, 'html.parser')
         channels_div = soup.find(id='channels')
@@ -69,7 +75,21 @@ class ESPNParser(ParserBase):
             channel_name = section.find('h4').text
             data += self._parse_channels(section, channel_name)
 
-        return data
+        return pd.DataFrame(data)
+
+    def get(self, target_date):
+        '''Gets the data for the given date object'''
+
+        params = {'date': str(target_date)}
+        response = requests.get(self.URL, params=params)
+        response.raise_for_status()
+
+        return self._parse(response.text)
+
+    def name(self):
+        '''The fetcher name.'''
+        return self.NAME
+
 
 
 # Utility functions
